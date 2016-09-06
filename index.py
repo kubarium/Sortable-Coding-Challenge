@@ -1,21 +1,26 @@
 import json
+from collections import OrderedDict
 
 def result():
     with open("products.txt") as products, open("listings.txt") as listings, open("results.txt","w") as results:
 
+
         products = [json.loads(product) for product in products.readlines()]
-        listings = [(json.loads(listing),str(listing)) for listing in listings.readlines()]
+        #listings = [(json.loads(listing)["title"],json.loads(listing)["manufacturer"], json.loads(listing, object_pairs_hook=collections.OrderedDict)) for listing in listings.readlines()]
+        listings = [json.loads(listing, object_pairs_hook=OrderedDict) for listing in listings.readlines()]
 
         for product in products:
 
             matches = list()
 
             for listing in listings:
-                if (product["manufacturer"] == listing[0]["manufacturer"]) and ("family" in product and product["family"] in listing[0]["title"]) and (product["model"] in listing[0]["title"]):
-                    matches.append(listing[1])
+                if (product["manufacturer"] == listing["manufacturer"]) and ("family" in product and product["family"] in listing["title"]) and (product["model"] in listing["title"]):
+                #if (product["manufacturer"] in listing[0] or product["manufacturer"] == listing[1]) and ("family" in product and product["family"] in listing[0]) and (product["model"] in listing[0]):
+                    matches.append(listing)
 
+            #json.dump(str({"product_name":product["product_name"], "listings":matches})+"\n", results)
 
-            results.write("%s\n" % json.JSONEncoder().encode({"product_name":product["product_name"], "listings":matches}))
+            results.write("%s\n" % json.JSONEncoder().encode({"product_name":product["product_name"],"listings":matches}))
 
 if __name__ == "__main__":
     result()
