@@ -14,7 +14,8 @@ def result():
                 if (product["manufacturer"] == listing["manufacturer"]) and ("family" in product and product["family"] in listing["title"]) and (product["model"] in listing["title"]):
                     matches.append(listing)
 
-            results.write("%s\n" % str({"product_name":product["product_name"], "listings":matches}))
+
+            results.write("%s\n" % json.JSONEncoder().encode({"product_name":product["product_name"], "listings":matches}))
 
 if __name__ == "__main__":
     result()
